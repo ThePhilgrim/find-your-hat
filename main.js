@@ -10,6 +10,7 @@ class Field {
     this.field = field;
     this.playerXPosition = 0;
     this.playerYPosition = 0;
+    this.gameLost = false;
   }
 
   getCurrentBoardState() {
@@ -19,12 +20,30 @@ class Field {
   }
 
   changePlayerPosition(event) {
+    event = event.toLowerCase();
 
+    // Change playerXPosition
+    if (event === 'a') {
+      this.playerXPosition -= 1;
+    } else if (event === 'd') {
+      this.playerXPosition += 1;
+    }
+
+    // Change playerYPosition
+    if (event === 'w') {
+      this.playerYPosition -= 1;
+    } else if (event === 's') {
+      this.playerYPosition += 1;
+    }
+
+    this.checkIfGameLost();
   }
 
-  checkIfGameLost() {
-
+  checkIfGameLost(event) {
+    //Check if character moves outside field
+    if ()
   }
+
 }
 
 
