@@ -1,9 +1,9 @@
-const prompt = require('prompt-sync')({sigint: true});
+const prompt = require("prompt-sync")({ sigint: true });
 
-const hat = '^';
-const hole = 'O';
-const fieldCharacter = '░';
-const pathCharacter = '*';
+const hat = "^";
+const hole = "O";
+const fieldCharacter = "░";
+const pathCharacter = "*";
 
 class Field {
   constructor(field) {
@@ -15,7 +15,7 @@ class Field {
 
   getCurrentBoardState() {
     for (let i = 0; i < this.field.length; i++) {
-      console.log(this.field[i].join(''));
+      console.log(this.field[i].join(""));
     }
   }
 
@@ -23,40 +23,44 @@ class Field {
     event = event.toLowerCase();
 
     // Change playerXPosition
-    if (event === 'a') {
+    if (event === "a") {
       this.playerXPosition -= 1;
-    } else if (event === 'd') {
+    } else if (event === "d") {
       this.playerXPosition += 1;
     }
 
     // Change playerYPosition
-    if (event === 'w') {
+    if (event === "w") {
       this.playerYPosition -= 1;
-    } else if (event === 's') {
+    } else if (event === "s") {
       this.playerYPosition += 1;
     }
 
-    this.checkIfGameLost();
+    if (!this.gameLost()) {
+      // Insert player indicator in new spot here
+    }
   }
 
-  checkIfGameLost(event) {
-    //Check if character moves outside field
-    if ()
+  gameLost() {
+    //Check if character is outside field
+    if (
+      this.playerXPosition > this.field[this.playerYPosition].length ||
+      this.playerXPosition < 0 ||
+      this.playerYPosition > this.field.length ||
+      this.playerYPosition < 0
+    ) {
+      this.gameLost = true;
+    }
   }
-
 }
 
-
-
-
 const myField = new Field([
-  ['*', '░', 'O'],
-  ['░', 'O', '░'],
-  ['░', '^', '░'],
+  ["*", "░", "O"],
+  ["░", "O", "░"],
+  ["░", "^", "░"],
 ]);
 
 myField.getCurrentBoardState();
-
 
 /*
 EXAMPLE FIELD:
