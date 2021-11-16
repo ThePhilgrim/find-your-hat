@@ -10,14 +10,14 @@ class Field {
     this.field = field;
     this.playerXPosition = 0;
     this.playerYPosition = 0;
-    this.gameLost = false;
   }
 
   getCurrentBoardState() {
-    this.field.map(row => row.join("")).join("\n");
+    return this.field.map(row => row.join("")).join("\n");
   }
 
   changePlayerPosition(event) {
+    console.clear();
     event = event.toLowerCase();
 
     if (event === "a") {
@@ -32,36 +32,67 @@ class Field {
       this.playerYPosition += 1;
     }
 
-    if (!this.gameLost()) {
-      // TODO: Insert player indicator in new spot here
+    if (!this.checkIfGameIsLost()) {
+      if (event === "a" || event === "d" || event === "w" || event === "s") {
+        this.field[this.playerYPosition][this.playerXPosition] = "*";
+      } else {
+        console.log("Please use the WASD buttons to control your character.")
+      }
+      console.log(this.getCurrentBoardState());
     }
   }
 
-  gameLost() {
-    //Check if character is outside field
+  checkIfGameIsLost() {
     if (
       this.playerYPosition >= this.field.length ||
       this.playerYPosition < 0 ||
       this.playerXPosition >= this.field[this.playerYPosition].length ||
       this.playerXPosition < 0
     ) {
-      this.gameLost = true;
+      return "GAME LOST: You fell off the edge of the world.";
     }
 
-    // Check if character walked into a hole
     if (this.field[this.playerYPosition][this.playerXPosition] === "O") {
-      this.gameLost = true;
+      return "GAME LOST: You walked into a hole.";
+    }
+
+    return null;
+  }
+
+
+  startGame() {
+    console.log("Welcome to Find Your Hat – Use your WASD buttons to move your character (\'*\') to the hat (\'^\').");
+    console.log("Let's Start!");
+    console.log(this.getCurrentBoardState());
+
+    while (true) {
+      const gameOverReason = this.checkIfGameIsLost();
+
+      if (gameOverReason !== null) {
+        console.log(gameOverReason);
+        break;
+      }
+
+      let currentMove = prompt('');
+      this.changePlayerPosition(currentMove);
+
     }
   }
 }
 
 const myField = new Field([
-  ["*", "░", "O"],
-  ["░", "O", "░"],
-  ["░", "^", "░"],
+  ["*", "░", "░", "░", "░", "░", "░"],
+  ["░", "░", "░", "░", "░", "░", "░"],
+  ["░", "░", "░", "░", "O", "░", "░"],
+  ["░", "░", "O", "░", "░", "░", "░"],
+  ["░", "░", "░", "░", "░", "O", "░"],
+  ["░", "░", "░", "░", "░", "░", "░"],
+  ["░", "░", "░", "░", "░", "^", "░"],
 ]);
 
-myField.getCurrentBoardState();
+myField.startGame();
+
+// console.log(myField.getCurrentBoardState());
 
 /*
 EXAMPLE FIELD:
