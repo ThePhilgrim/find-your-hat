@@ -32,7 +32,7 @@ class Field {
       this.playerYPosition += 1;
     }
 
-    if (!this.checkIfGameIsLost()) {
+    if (!this.getGameStatus()) {
       if (event === "a" || event === "d" || event === "w" || event === "s") {
         this.field[this.playerYPosition][this.playerXPosition] = "*";
       } else {
@@ -42,7 +42,7 @@ class Field {
     }
   }
 
-  checkIfGameIsLost() {
+  getGameStatus() {
     if (
       this.playerYPosition >= this.field.length ||
       this.playerYPosition < 0 ||
@@ -50,15 +50,14 @@ class Field {
       this.playerXPosition < 0
     ) {
       return "GAME LOST: You fell off the edge of the world.";
-    }
-
-    if (this.field[this.playerYPosition][this.playerXPosition] === "O") {
+    } else if (this.field[this.playerYPosition][this.playerXPosition] === "O") {
       return "GAME LOST: You walked into a hole.";
+    } else if (this.field[this.playerYPosition][this.playerXPosition] === "^") {
+      return "GAME WON: Congratulations! You found your hat!"
     }
 
     return null;
   }
-
 
   startGame() {
     console.log("Welcome to Find Your Hat – Use your WASD buttons to move your character (\'*\') to the hat (\'^\').");
@@ -66,7 +65,7 @@ class Field {
     console.log(this.getCurrentBoardState());
 
     while (true) {
-      const gameOverReason = this.checkIfGameIsLost();
+      const gameOverReason = this.getGameStatus();
 
       if (gameOverReason !== null) {
         console.log(gameOverReason);
@@ -91,15 +90,3 @@ const myField = new Field([
 ]);
 
 myField.startGame();
-
-// console.log(myField.getCurrentBoardState());
-
-/*
-EXAMPLE FIELD:
-
-*░O░░░░^░░
-░O░░░OO░OO
-░░OO░░░O░░
-O░░░OO░░░░
-░░O░░░░O░░
-*/
