@@ -80,7 +80,7 @@ class Field {
       if (gameOverReason !== null) {
         console.log(gameOverReason);
         break;
-      } else if (this.gameIsWon === true) {
+      } else if (this.field[this.playerYPosition][this.playerXPosition] === "^") {
         console.log("GAME WON: Congratulations! You found your hat!");
         break;
       }
