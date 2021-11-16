@@ -32,7 +32,7 @@ class Field {
       this.playerYPosition += 1;
     }
 
-    if (!this.checkIfGameIsLost()) {
+    if (!this.getGameStatus()) {
       if (event === "a" || event === "d" || event === "w" || event === "s") {
         this.field[this.playerYPosition][this.playerXPosition] = "*";
       } else {
@@ -42,7 +42,7 @@ class Field {
     }
   }
 
-  checkIfGameIsLost() {
+  getGameStatus() {
     if (
       this.playerYPosition >= this.field.length ||
       this.playerYPosition < 0 ||
@@ -50,10 +50,10 @@ class Field {
       this.playerXPosition < 0
     ) {
       return "GAME LOST: You fell off the edge of the world.";
-    }
-
-    if (this.field[this.playerYPosition][this.playerXPosition] === "O") {
+    } else if (this.field[this.playerYPosition][this.playerXPosition] === "O") {
       return "GAME LOST: You walked into a hole.";
+    } else if (this.field[this.playerYPosition][this.playerXPosition] === "^") {
+      return "GAME WON: Congratulations! You found your hat!"
     }
 
     return null;
@@ -65,13 +65,10 @@ class Field {
     console.log(this.getCurrentBoardState());
 
     while (true) {
-      const gameOverReason = this.checkIfGameIsLost();
+      const gameOverReason = this.getGameStatus();
 
       if (gameOverReason !== null) {
         console.log(gameOverReason);
-        break;
-      } else if (this.field[this.playerYPosition][this.playerXPosition] === "^") {
-        console.log("GAME WON: Congratulations! You found your hat!");
         break;
       }
 
