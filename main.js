@@ -32,7 +32,10 @@ class Field {
       this.playerYPosition += 1;
     }
 
-    if (!this.gameLost()) {
+    console.log("X: " + this.playerXPosition);
+    console.log("Y: " + this.playerYPosition);
+
+    if (!this.checkIfGameIsLost()) {
       if (event === "a" || event === "d") {
         this.field[this.playerYPosition].splice(this.playerXPosition, 1, "*");
       } else if (event === "w") {
@@ -40,11 +43,11 @@ class Field {
       } else if (event === "s") {
         this.field[this.playerYPosition + 1].splice(this.playerXPosition, 1, "*");
       }
-      console.log(getCurrentBoardState);
+      console.log(this.getCurrentBoardState());
     }
   }
 
-  gameLost() {
+  checkIfGameIsLost() {
     //Check if character is outside field
     if (
       this.playerYPosition >= this.field.length ||
@@ -60,13 +63,28 @@ class Field {
       this.gameLost = true;
     }
   }
+
+  startGame() {
+    console.log("Welcome to Find Your Hat – Use your WASD buttons to steer your character (\'*\') to your hat (\'^\').");
+    console.log("Let's Start!");
+    console.log("X: " + this.playerXPosition);
+    console.log("Y: " + this.playerYPosition);
+    console.log(this.getCurrentBoardState());
+
+    while (!this.gameLost) {
+      let currentMove = prompt('');
+      this.changePlayerPosition(currentMove);
+    }
+  }
 }
 
 const myField = new Field([
-  ["░", "░", "░"],
   ["*", "░", "░"],
+  ["░", "░", "O"],
   ["░", "^", "░"],
 ]);
+
+myField.startGame();
 
 // console.log(myField.getCurrentBoardState());
 
