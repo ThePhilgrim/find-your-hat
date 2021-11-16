@@ -10,7 +10,6 @@ class Field {
     this.field = field;
     this.playerXPosition = 0;
     this.playerYPosition = 0;
-    this.gameLost = false;
   }
 
   getCurrentBoardState() {
@@ -18,7 +17,9 @@ class Field {
   }
 
   changePlayerPosition(event) {
+    console.clear();
     event = event.toLowerCase();
+    console.log("Event: " + event);
 
     if (event === "a") {
       this.playerXPosition -= 1;
@@ -36,12 +37,10 @@ class Field {
     console.log("Y: " + this.playerYPosition);
 
     if (!this.checkIfGameIsLost()) {
-      if (event === "a" || event === "d") {
+      if (event === "a" || event === "d" || event === "w" || event === "s") {
         this.field[this.playerYPosition].splice(this.playerXPosition, 1, "*");
-      } else if (event === "w") {
-        this.field[this.playerYPosition - 1].splice(this.playerXPosition, 1, "*");
-      } else if (event === "s") {
-        this.field[this.playerYPosition + 1].splice(this.playerXPosition, 1, "*");
+      } else {
+        console.log("Please use the WASD buttons to control your character.")
       }
       console.log(this.getCurrentBoardState());
     }
@@ -55,23 +54,25 @@ class Field {
       this.playerXPosition >= this.field[this.playerYPosition].length ||
       this.playerXPosition < 0
     ) {
-      this.gameLost = true;
+      return true;
     }
 
     // Check if character walked into a hole
     if (this.field[this.playerYPosition][this.playerXPosition] === "O") {
-      this.gameLost = true;
+      return true;
     }
+
+    return false;
   }
 
   startGame() {
-    console.log("Welcome to Find Your Hat – Use your WASD buttons to steer your character (\'*\') to your hat (\'^\').");
+    console.log("Welcome to Find Your Hat – Use your WASD buttons to move your character (\'*\') to the hat (\'^\').");
     console.log("Let's Start!");
     console.log("X: " + this.playerXPosition);
     console.log("Y: " + this.playerYPosition);
     console.log(this.getCurrentBoardState());
 
-    while (!this.gameLost) {
+    while (!this.checkIfGameIsLost()) {
       let currentMove = prompt('');
       this.changePlayerPosition(currentMove);
     }
@@ -79,9 +80,13 @@ class Field {
 }
 
 const myField = new Field([
-  ["*", "░", "░"],
-  ["░", "░", "O"],
-  ["░", "^", "░"],
+  ["*", "░", "░", "░", "░", "░", "░"],
+  ["░", "░", "░", "░", "░", "░", "░"],
+  ["░", "░", "░", "░", "O", "░", "░"],
+  ["░", "░", "O", "░", "░", "░", "░"],
+  ["░", "░", "░", "░", "░", "O", "░"],
+  ["░", "░", "░", "░", "░", "░", "░"],
+  ["░", "░", "░", "░", "░", "^", "░"],
 ]);
 
 myField.startGame();
