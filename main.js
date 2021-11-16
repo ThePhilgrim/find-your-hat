@@ -19,7 +19,6 @@ class Field {
   changePlayerPosition(event) {
     console.clear();
     event = event.toLowerCase();
-    console.log("Event: " + event);
 
     if (event === "a") {
       this.playerXPosition -= 1;
@@ -33,10 +32,7 @@ class Field {
       this.playerYPosition += 1;
     }
 
-    console.log("X: " + this.playerXPosition);
-    console.log("Y: " + this.playerYPosition);
-
-    if (!this.checkIfGameIsLost(true)) {
+    if (!this.checkIfGameIsLost()) {
       if (event === "a" || event === "d" || event === "w" || event === "s") {
         this.field[this.playerYPosition][this.playerXPosition] = "*";
       } else {
@@ -46,41 +42,40 @@ class Field {
     }
   }
 
-  checkIfGameIsLost(fromPlayerPosFunc = false) {
-    //Check if character is outside field
+  checkIfGameIsLost() {
     if (
       this.playerYPosition >= this.field.length ||
       this.playerYPosition < 0 ||
       this.playerXPosition >= this.field[this.playerYPosition].length ||
       this.playerXPosition < 0
     ) {
-      if (fromPlayerPosFunc) {
-        console.log("GAME LOST: You fell off the edge of the world.")
-      }
-      return true;
+      return "GAME LOST: You fell off the edge of the world.";
     }
 
-    // Check if character walked into a hole
     if (this.field[this.playerYPosition][this.playerXPosition] === "O") {
-      if (fromPlayerPosFunc) {
-        console.log("GAME LOST: You walked into a hole.")
-      }
-      return true;
+      return "GAME LOST: You walked into a hole.";
     }
 
-    return false;
+    return null;
   }
+
 
   startGame() {
     console.log("Welcome to Find Your Hat – Use your WASD buttons to move your character (\'*\') to the hat (\'^\').");
     console.log("Let's Start!");
-    console.log("X: " + this.playerXPosition);
-    console.log("Y: " + this.playerYPosition);
     console.log(this.getCurrentBoardState());
 
-    while (!this.checkIfGameIsLost()) {
+    while (true) {
+      const gameOverReason = this.checkIfGameIsLost();
+
+      if (gameOverReason !== null) {
+        console.log(gameOverReason);
+        break;
+      }
+
       let currentMove = prompt('');
       this.changePlayerPosition(currentMove);
+
     }
   }
 }
