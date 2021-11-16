@@ -14,7 +14,7 @@ class Field {
   }
 
   getCurrentBoardState() {
-    this.field.map(row => row.join("")).join("\n");
+    return this.field.map(row => row.join("")).join("\n");
   }
 
   changePlayerPosition(event) {
@@ -33,7 +33,14 @@ class Field {
     }
 
     if (!this.gameLost()) {
-      // TODO: Insert player indicator in new spot here
+      if (event === "a" || event === "d") {
+        this.field[this.playerYPosition].splice(this.playerXPosition, 1, "*");
+      } else if (event === "w") {
+        this.field[this.playerYPosition - 1].splice(this.playerXPosition, 1, "*");
+      } else if (event === "s") {
+        this.field[this.playerYPosition + 1].splice(this.playerXPosition, 1, "*");
+      }
+      console.log(getCurrentBoardState);
     }
   }
 
@@ -56,12 +63,12 @@ class Field {
 }
 
 const myField = new Field([
-  ["*", "░", "O"],
-  ["░", "O", "░"],
+  ["░", "░", "░"],
+  ["*", "░", "░"],
   ["░", "^", "░"],
 ]);
 
-myField.getCurrentBoardState();
+// console.log(myField.getCurrentBoardState());
 
 /*
 EXAMPLE FIELD:
