@@ -38,7 +38,7 @@ class Field {
 
     if (!this.checkIfGameIsLost(true)) {
       if (event === "a" || event === "d" || event === "w" || event === "s") {
-        this.field[this.playerYPosition].splice(this.playerXPosition, 1, "*");
+        this.field[this.playerYPosition][this.playerXPosition] = "*";
       } else {
         console.log("Please use the WASD buttons to control your character.")
       }
