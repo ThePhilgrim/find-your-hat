@@ -10,7 +10,6 @@ class Field {
     this.field = field;
     this.playerXPosition = 0;
     this.playerYPosition = 0;
-    this.gameIsWon = false;
   }
 
   getCurrentBoardState() {
@@ -32,8 +31,6 @@ class Field {
     } else if (event === "s") {
       this.playerYPosition += 1;
     }
-
-    this.checkIfGameIsWon();
 
     if (!this.checkIfGameIsLost()) {
       if (event === "a" || event === "d" || event === "w" || event === "s") {
@@ -61,13 +58,6 @@ class Field {
 
     return null;
   }
-
-  checkIfGameIsWon() {
-    if (this.field[this.playerYPosition][this.playerXPosition] === "^") {
-      this.gameIsWon = true;
-    }
-  }
-
 
   startGame() {
     console.log("Welcome to Find Your Hat – Use your WASD buttons to move your character (\'*\') to the hat (\'^\').");
