@@ -36,7 +36,7 @@ class Field {
     console.log("X: " + this.playerXPosition);
     console.log("Y: " + this.playerYPosition);
 
-    if (!this.checkIfGameIsLost()) {
+    if (!this.checkIfGameIsLost(true)) {
       if (event === "a" || event === "d" || event === "w" || event === "s") {
         this.field[this.playerYPosition].splice(this.playerXPosition, 1, "*");
       } else {
@@ -46,7 +46,7 @@ class Field {
     }
   }
 
-  checkIfGameIsLost() {
+  checkIfGameIsLost(fromPlayerPosFunc = false) {
     //Check if character is outside field
     if (
       this.playerYPosition >= this.field.length ||
@@ -54,11 +54,17 @@ class Field {
       this.playerXPosition >= this.field[this.playerYPosition].length ||
       this.playerXPosition < 0
     ) {
+      if (fromPlayerPosFunc) {
+        console.log("GAME LOST: You fell off the edge of the world.")
+      }
       return true;
     }
 
     // Check if character walked into a hole
     if (this.field[this.playerYPosition][this.playerXPosition] === "O") {
+      if (fromPlayerPosFunc) {
+        console.log("GAME LOST: You walked into a hole.")
+      }
       return true;
     }
 
