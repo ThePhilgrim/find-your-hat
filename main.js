@@ -5,11 +5,40 @@ const hole = "O";
 const fieldCharacter = "░";
 const pathCharacter = "*";
 
-class Field {
-  constructor(field) {
-    this.field = field;
+class Game {
+  constructor() {
+    this.field = [];
     this.playerXPosition = 0;
     this.playerYPosition = 0;
+  }
+
+  generateField(fieldSize) {
+    for (let i = 0; i < fieldSize; i++) {
+      this.field.push([]);
+      for (let j = 0; j < fieldSize; j++) {
+        console.log(i);
+        this.field[i].push('░')
+      }
+    }
+
+    // Put player on field
+    this.field[0][0] = "*";
+
+    // Put hat on field
+    let hatX = 0;
+    let hatY = 0;
+
+    // Prevents the hat from spawning on player
+    while (hatX === 0 && hatY === 0) {
+      console.log('While loop running');
+      hatX = Math.floor(Math.random() * fieldSize);
+      hatY = Math.floor(Math.random() * fieldSize);
+    }
+
+    console.log("Hat X = " + hatX);
+    console.log("Hat Y = " + hatY);
+
+    this.field[hatY][hatX] = "^";
   }
 
   getCurrentBoardState() {
@@ -60,8 +89,19 @@ class Field {
   }
 
   startGame() {
-    console.log("Welcome to Find Your Hat – Use your WASD buttons to move your character (\'*\') to the hat (\'^\').");
+
+    console.log("Welcome to Find Your Hat!")
+
+    const fieldSize = prompt("How wide/high do you want the field to be? (Enter a number between 5-30)");
+
+    // const holePercentage = prompt(`Great, the field will be ${fieldSize}x${fieldSize}. How many percent do you want to be covered in holes? (Enter a number between 1-60)`);
+
+    // TODO: Add holePercentage to generateField()
+    this.generateField(fieldSize);
+
+    console.log("Wonderful! Use your WASD buttons to move your character (\'*\') to the hat (\'^\').");
     console.log("Let's Start!");
+
     console.log(this.getCurrentBoardState());
 
     while (true) {
@@ -79,14 +119,17 @@ class Field {
   }
 }
 
-const myField = new Field([
-  ["*", "░", "░", "░", "░", "░", "░"],
-  ["░", "░", "░", "░", "░", "░", "░"],
-  ["░", "░", "░", "░", "O", "░", "░"],
-  ["░", "░", "O", "░", "░", "░", "░"],
-  ["░", "░", "░", "░", "░", "O", "░"],
-  ["░", "░", "░", "░", "░", "░", "░"],
-  ["░", "░", "░", "░", "░", "^", "░"],
-]);
 
-myField.startGame();
+const myGame = new Game();
+
+myGame.startGame();
+
+// const myGame = new Game([
+//   ["*", "░", "░", "░", "░", "░", "░"],
+//   ["░", "░", "░", "░", "░", "░", "░"],
+//   ["░", "░", "░", "░", "O", "░", "░"],
+//   ["░", "░", "O", "░", "░", "░", "░"],
+//   ["░", "░", "░", "░", "░", "O", "░"],
+//   ["░", "░", "░", "░", "░", "░", "░"],
+//   ["░", "░", "░", "░", "░", "^", "░"],
+// ]);
