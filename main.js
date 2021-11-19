@@ -1,9 +1,9 @@
 const prompt = require("prompt-sync")({ sigint: true });
 
-const hat = "^";
-const hole = "O";
-const fieldCharacter = "░";
-const pathCharacter = "*";
+const hatChar = "^";
+const holeChar = "O";
+const fieldChar = "░";
+const playerChar = "*";
 
 class Game {
   constructor() {
@@ -16,12 +16,12 @@ class Game {
     for (let i = 0; i < fieldSize; i++) {
       this.field.push([]);
       for (let j = 0; j < fieldSize; j++) {
-        this.field[i].push('░')
+        this.field[i].push(fieldChar);
       }
     }
 
     // Put player on field
-    this.field[0][0] = "*";
+    this.field[0][0] = playerChar;
 
     // Put hat on field
     let hatX = 0;
@@ -33,7 +33,7 @@ class Game {
       hatY = Math.floor(Math.random() * fieldSize);
     }
 
-    this.field[hatY][hatX] = "^";
+    this.field[hatY][hatX] = hatChar;
 
     // Put holes on the field
     if (holePercentage > 60) {
@@ -45,11 +45,13 @@ class Game {
     const numOfHoles = Math.round(holePercentage / 100 * (fieldSize * fieldSize));
 
     for (let i = 0; i < numOfHoles; i++) {
-      let holeX = Math.floor(Math.random() * fieldSize);
-      let holeY = Math.floor(Math.random() * fieldSize);
+      while (true) {
+        let holeX = Math.floor(Math.random() * fieldSize);
+        let holeY = Math.floor(Math.random() * fieldSize);
 
-      if (this.field[holeY][holeX] !== "*" && this.field[holeY][holeX] !== "^") {
-        this.field[holeY][holeX] = "O";
+        if (this.field[holeY][holeX] !== playerChar && this.field[holeY][holeX] !== hatChar) {
+          this.field[holeY][holeX] = holeChar;
+        }
       }
     }
   }
@@ -76,7 +78,7 @@ class Game {
 
     if (!this.getGameStatus()) {
       if (event === "a" || event === "d" || event === "w" || event === "s") {
-        this.field[this.playerYPosition][this.playerXPosition] = "*";
+        this.field[this.playerYPosition][this.playerXPosition] = playerChar;
       } else {
         console.log("Please use the WASD buttons to control your character.")
       }
@@ -92,9 +94,9 @@ class Game {
       this.playerXPosition < 0
     ) {
       return "GAME LOST: You fell off the edge of the world.";
-    } else if (this.field[this.playerYPosition][this.playerXPosition] === "O") {
+    } else if (this.field[this.playerYPosition][this.playerXPosition] === holeChar) {
       return "GAME LOST: You walked into a hole.";
-    } else if (this.field[this.playerYPosition][this.playerXPosition] === "^") {
+    } else if (this.field[this.playerYPosition][this.playerXPosition] === hatChar) {
       return "GAME WON: Congratulations! You found your hat!"
     }
 
@@ -111,7 +113,7 @@ class Game {
 
     this.generateField(fieldSize, holePercentage);
 
-    console.log("Wonderful! Use your WASD buttons to move your character (\'*\') to the hat (\'^\').");
+    console.log(`Wonderful! Use your WASD buttons to move your character (${playerChar}) to the hat (${hatChar}).`);
     console.log("Let's Start!");
 
     console.log(this.getCurrentBoardState());
