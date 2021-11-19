@@ -44,7 +44,7 @@ class Game {
 
     const numOfHoles = Math.round(holePercentage / 100 * (fieldSize * fieldSize));
 
-    for (let i = 0; i < numOfHoles; i++) {
+    for (let i = 0; i <= numOfHoles; i++) {
       while (true) {
         let holeX = Math.floor(Math.random() * fieldSize);
         let holeY = Math.floor(Math.random() * fieldSize);
@@ -52,8 +52,44 @@ class Game {
         if (this.field[holeY][holeX] !== playerChar && this.field[holeY][holeX] !== hatChar) {
           this.field[holeY][holeX] = holeChar;
         }
+
+        if (!this.pathExists(fieldSize, hatX, hatY)) {
+          this.field[holeY][holeX] = fieldChar;
+          i -= 1;
+        }
       }
     }
+  }
+
+  pathExists(fieldSize, currentX, currentY) {
+    fieldSquaresToCheck = [];
+    fieldSquaresAlreadyChecked = [];
+
+    let neighbours = getNeighbours(fieldSize, [currentX, currentY], fieldSquaresAlreadyChecked);
+
+    neighbours.forEach(neighbour => fieldSquaresToCheck.push(neighbour));
+
+    while (fieldSquaresToCheck) {
+      let newNeighbours = fieldSquaresToCheck.flatMap(fieldSquare => getNeighbours(fieldSize, fieldSquare, fieldSquaresAlreadyChecked));
+
+      fieldSquaresToCheck.forEach(fieldSquare => fieldSquaresAlreadyChecked.push(fieldSquare));
+      fieldSquaresToCheck = newNeighbours;
+    }
+  }
+
+  getNeighbours(fieldSize, [currentX, currentY], fieldSquaresAlreadyChecked) {
+    const neighbours = [
+      [currentY - 1, currentX],
+      [currentY, currentX + 1],
+      [currentY + 1, currentX],
+      [currentY, currentX - 1]
+    ]
+
+    return neighbours.filter(fieldSquare =>
+      (fieldSquare[0] >= 0 && fieldSquare[0] < fieldSize) &&
+      (fieldSquare[1] >= 0 && fieldSquare[1] < fieldSize) &&
+      (this.field[fieldSquare[0]][fieldSquare[1]] !== "O") &&
+      (!fieldSquaresAlreadyChecked.some(array => array[0] === fieldSquare[0] && array[1] === fieldSquare[1])))
   }
 
   getCurrentBoardState() {
