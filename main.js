@@ -12,11 +12,10 @@ class Game {
     this.playerYPosition = 0;
   }
 
-  generateField(fieldSize) {
+  generateField(fieldSize, holePercentage) {
     for (let i = 0; i < fieldSize; i++) {
       this.field.push([]);
       for (let j = 0; j < fieldSize; j++) {
-        console.log(i);
         this.field[i].push('░')
       }
     }
@@ -30,15 +29,29 @@ class Game {
 
     // Prevents the hat from spawning on player
     while (hatX === 0 && hatY === 0) {
-      console.log('While loop running');
       hatX = Math.floor(Math.random() * fieldSize);
       hatY = Math.floor(Math.random() * fieldSize);
     }
 
-    console.log("Hat X = " + hatX);
-    console.log("Hat Y = " + hatY);
-
     this.field[hatY][hatX] = "^";
+
+    // Put holes on the field
+    if (holePercentage > 60) {
+      holePercentage = 60;
+    } else if (holePercentage < 1) {
+      holePercentage = 1;
+    }
+
+    const numOfHoles = Math.round(holePercentage / 100 * (fieldSize * fieldSize));
+
+    for (let i = 0; i < numOfHoles; i++) {
+      let holeX = Math.floor(Math.random() * fieldSize);
+      let holeY = Math.floor(Math.random() * fieldSize);
+
+      if (this.field[holeY][holeX] !== "*" && this.field[holeY][holeX] !== "^") {
+        this.field[holeY][holeX] = "O";
+      }
+    }
   }
 
   getCurrentBoardState() {
@@ -92,12 +105,11 @@ class Game {
 
     console.log("Welcome to Find Your Hat!")
 
-    const fieldSize = prompt("How wide/high do you want the field to be? (Enter a number between 5-30)");
+    const fieldSize = prompt("How wide/high do you want the field to be? (Enter a number between 5-30): ");
 
-    // const holePercentage = prompt(`Great, the field will be ${fieldSize}x${fieldSize}. How many percent do you want to be covered in holes? (Enter a number between 1-60)`);
+    const holePercentage = prompt(`Great, the field will be ${fieldSize}x${fieldSize}. How many percent do you want to be covered in holes? (Enter a number between 1-60): `);
 
-    // TODO: Add holePercentage to generateField()
-    this.generateField(fieldSize);
+    this.generateField(fieldSize, holePercentage);
 
     console.log("Wonderful! Use your WASD buttons to move your character (\'*\') to the hat (\'^\').");
     console.log("Let's Start!");
