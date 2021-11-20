@@ -44,6 +44,8 @@ class Game {
     }
 
     const numOfHoles = Math.round(holePercentage / 100 * (this.fieldSize * this.fieldSize));
+    let placeHolesAttempts = 0;
+    let lastPlacedHole;
 
     for (let i = 0; i < numOfHoles; i++) {
       let holeY = Math.floor(Math.random() * this.fieldSize);
@@ -51,8 +53,14 @@ class Game {
 
       if (this.field[holeY][holeX] === fieldChar && this.pathExists(hatY, hatX)) {
         this.field[holeY][holeX] = holeChar;
+        lastPlacedHole = this.field[holeY][holeX];
       } else {
-        i -= 1;
+        placeHolesAttempts += 1;
+        if (placeHolesAttempts < 100) {
+          i -= 1;
+        } else {
+          lastPlacedHole = fieldChar;
+        }
       }
     }
   }
@@ -62,7 +70,7 @@ class Game {
     let fieldSquaresAlreadyChecked = [];
 
     while (fieldSquaresToCheck.length > 0) {
-      console.log(fieldSquaresToCheck.length);
+
       let newNeighbours = fieldSquaresToCheck.flatMap(fieldSquare => this.getNeighbours(fieldSquare, fieldSquaresToCheck, fieldSquaresAlreadyChecked));
 
       newNeighbours = Array.from(new Set(newNeighbours.map(JSON.stringify)), JSON.parse);
@@ -86,6 +94,7 @@ class Game {
       [currentY, currentX - 1]
     ]
 
+    // Checks that the square is inside field, that it's not a holeChar, that it is not already in either fieldSquaresAlreadyChecked or in fieldSquaresToCheck
     return neighbours.filter(fieldSquare =>
       (fieldSquare[0] >= 0 && fieldSquare[0] < this.fieldSize) &&
       (fieldSquare[1] >= 0 && fieldSquare[1] < this.fieldSize) &&
@@ -145,9 +154,9 @@ class Game {
 
     console.log("Welcome to Find Your Hat!")
 
-    this.fieldSize = prompt("How wide/high do you want the field to be? (Enter a number between 5-30): ");
+    this.fieldSize = Number(prompt("How wide/high do you want the field to be? (Enter a number between 5-30): "));
 
-    const holePercentage = prompt(`How many percent do you want to be covered in holes? (Enter a number between 1-60): `);
+    const holePercentage = Number(prompt(`How many percent do you want to be covered in holes? (Enter a number between 1-60): `));
 
     this.generateField(holePercentage);
 
