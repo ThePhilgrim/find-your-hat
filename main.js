@@ -64,8 +64,8 @@ class Game {
   }
 
   pathExists(fieldSize, currentX, currentY) {
-    fieldSquaresToCheck = [];
-    fieldSquaresAlreadyChecked = [];
+    let fieldSquaresToCheck = [];
+    let fieldSquaresAlreadyChecked = [];
 
     let neighbours = getNeighbours(fieldSize, [currentX, currentY], fieldSquaresAlreadyChecked);
 
