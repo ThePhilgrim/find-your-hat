@@ -65,6 +65,8 @@ class Game {
       console.log(fieldSquaresToCheck.length);
       let newNeighbours = fieldSquaresToCheck.flatMap(fieldSquare => this.getNeighbours(fieldSquare, fieldSquaresToCheck, fieldSquaresAlreadyChecked));
 
+      newNeighbours = Array.from(new Set(newNeighbours.map(JSON.stringify)), JSON.parse);
+
       fieldSquaresToCheck.forEach(fieldSquare => fieldSquaresAlreadyChecked.push(fieldSquare));
       fieldSquaresToCheck = newNeighbours;
 
