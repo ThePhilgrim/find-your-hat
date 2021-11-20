@@ -49,26 +49,17 @@ class Game {
       let holeY = Math.floor(Math.random() * this.fieldSize);
       let holeX = Math.floor(Math.random() * this.fieldSize);
 
-      if (this.field[holeY][holeX] !== playerChar && this.field[holeY][holeX] !== hatChar) {
+      if (this.field[holeY][holeX] === fieldChar && this.pathExists(hatY, hatX)) {
         this.field[holeY][holeX] = holeChar;
-      } else if (this.field[holeY][holeX] === playerChar && this.field[holeY][holeX] === hatChar) {
-        i -= 1;
-      }
-
-      if (!this.pathExists(hatX, hatY)) {
-        this.field[holeY][holeX] = fieldChar;
+      } else {
         i -= 1;
       }
     }
   }
 
-  pathExists(currentX, currentY) {
-    let fieldSquaresToCheck = [];
+  pathExists(currentY, currentX) {
+    let fieldSquaresToCheck = [[currentY, currentX]];
     let fieldSquaresAlreadyChecked = [];
-
-    let neighbours = this.getNeighbours([currentX, currentY], fieldSquaresAlreadyChecked);
-
-    neighbours.forEach(neighbour => fieldSquaresToCheck.push(neighbour));
 
     while (fieldSquaresToCheck) {
       let newNeighbours = fieldSquaresToCheck.flatMap(fieldSquare => this.getNeighbours(fieldSquare, fieldSquaresAlreadyChecked));
@@ -83,7 +74,7 @@ class Game {
     return false;
   }
 
-  getNeighbours([currentX, currentY], fieldSquaresAlreadyChecked) {
+  getNeighbours([currentY, currentX], fieldSquaresAlreadyChecked) {
 
     const neighbours = [
       [currentY - 1, currentX],
@@ -180,13 +171,3 @@ class Game {
 const myGame = new Game();
 
 myGame.startGame();
-
-// const myGame = new Game([
-//   ["*", "░", "░", "░", "░", "░", "░"],
-//   ["░", "░", "░", "░", "░", "░", "░"],
-//   ["░", "░", "░", "░", "O", "░", "░"],
-//   ["░", "░", "O", "░", "░", "░", "░"],
-//   ["░", "░", "░", "░", "░", "O", "░"],
-//   ["░", "░", "░", "░", "░", "░", "░"],
-//   ["░", "░", "░", "░", "░", "^", "░"],
-// ]);
