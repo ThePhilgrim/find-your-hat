@@ -51,6 +51,8 @@ class Game {
 
         if (this.field[holeY][holeX] !== playerChar && this.field[holeY][holeX] !== hatChar) {
           this.field[holeY][holeX] = holeChar;
+        } else if (this.field[holeY][holeX] === playerChar && this.field[holeY][holeX] === hatChar) {
+          i -= 1;
         }
 
         if (!this.pathExists(fieldSize, hatX, hatY)) {
@@ -74,7 +76,12 @@ class Game {
 
       fieldSquaresToCheck.forEach(fieldSquare => fieldSquaresAlreadyChecked.push(fieldSquare));
       fieldSquaresToCheck = newNeighbours;
+
+      if (fieldSquaresToCheck.some(array => array[0] === 0 && array[1] === 0)) {
+        return true;
+      }
     }
+    return false;
   }
 
   getNeighbours(fieldSize, [currentX, currentY], fieldSquaresAlreadyChecked) {
