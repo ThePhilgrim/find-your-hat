@@ -61,8 +61,9 @@ class Game {
     let fieldSquaresToCheck = [[currentY, currentX]];
     let fieldSquaresAlreadyChecked = [];
 
-    while (fieldSquaresToCheck) {
-      let newNeighbours = fieldSquaresToCheck.flatMap(fieldSquare => this.getNeighbours(fieldSquare, fieldSquaresAlreadyChecked));
+    while (fieldSquaresToCheck.length > 0) {
+      console.log(fieldSquaresToCheck.length);
+      let newNeighbours = fieldSquaresToCheck.flatMap(fieldSquare => this.getNeighbours(fieldSquare, fieldSquaresToCheck, fieldSquaresAlreadyChecked));
 
       fieldSquaresToCheck.forEach(fieldSquare => fieldSquaresAlreadyChecked.push(fieldSquare));
       fieldSquaresToCheck = newNeighbours;
@@ -74,7 +75,7 @@ class Game {
     return false;
   }
 
-  getNeighbours([currentY, currentX], fieldSquaresAlreadyChecked) {
+  getNeighbours([currentY, currentX], fieldSquaresToCheck, fieldSquaresAlreadyChecked) {
 
     const neighbours = [
       [currentY - 1, currentX],
@@ -87,7 +88,8 @@ class Game {
       (fieldSquare[0] >= 0 && fieldSquare[0] < this.fieldSize) &&
       (fieldSquare[1] >= 0 && fieldSquare[1] < this.fieldSize) &&
       (this.field[fieldSquare[0]][fieldSquare[1]] !== "O") &&
-      (!fieldSquaresAlreadyChecked.some(array => array[0] === fieldSquare[0] && array[1] === fieldSquare[1])))
+      (!fieldSquaresAlreadyChecked.some(array => array[0] === fieldSquare[0] && array[1] === fieldSquare[1])) &&
+      (!fieldSquaresToCheck.some(array => array[0] === fieldSquare[0] && array[1] === fieldSquare[1])));
   }
 
   getCurrentBoardState() {
