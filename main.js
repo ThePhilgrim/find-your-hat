@@ -8,14 +8,15 @@ const playerChar = "*";
 class Game {
   constructor() {
     this.field = [];
+    this.fieldSize = 0;
     this.playerXPosition = 0;
     this.playerYPosition = 0;
   }
 
-  generateField(fieldSize, holePercentage) {
-    for (let i = 0; i < fieldSize; i++) {
+  generateField(holePercentage) {
+    for (let i = 0; i < this.fieldSize; i++) {
       this.field.push([]);
-      for (let j = 0; j < fieldSize; j++) {
+      for (let j = 0; j < this.fieldSize; j++) {
         this.field[i].push(fieldChar);
       }
     }
@@ -29,8 +30,8 @@ class Game {
 
     // Prevents the hat from spawning on player
     while (hatX === 0 && hatY === 0) {
-      hatX = Math.floor(Math.random() * fieldSize);
-      hatY = Math.floor(Math.random() * fieldSize);
+      hatX = Math.floor(Math.random() * this.fieldSize);
+      hatY = Math.floor(Math.random() * this.fieldSize);
     }
 
     this.field[hatY][hatX] = hatChar;
@@ -42,37 +43,35 @@ class Game {
       holePercentage = 1;
     }
 
-    const numOfHoles = Math.round(holePercentage / 100 * (fieldSize * fieldSize));
+    const numOfHoles = Math.round(holePercentage / 100 * (this.fieldSize * this.fieldSize));
 
-    for (let i = 0; i <= numOfHoles; i++) {
-      while (true) {
-        let holeX = Math.floor(Math.random() * fieldSize);
-        let holeY = Math.floor(Math.random() * fieldSize);
+    for (let i = 0; i < numOfHoles; i++) {
+      let holeY = Math.floor(Math.random() * this.fieldSize);
+      let holeX = Math.floor(Math.random() * this.fieldSize);
 
-        if (this.field[holeY][holeX] !== playerChar && this.field[holeY][holeX] !== hatChar) {
-          this.field[holeY][holeX] = holeChar;
-        } else if (this.field[holeY][holeX] === playerChar && this.field[holeY][holeX] === hatChar) {
-          i -= 1;
-        }
+      if (this.field[holeY][holeX] !== playerChar && this.field[holeY][holeX] !== hatChar) {
+        this.field[holeY][holeX] = holeChar;
+      } else if (this.field[holeY][holeX] === playerChar && this.field[holeY][holeX] === hatChar) {
+        i -= 1;
+      }
 
-        if (!this.pathExists(fieldSize, hatX, hatY)) {
-          this.field[holeY][holeX] = fieldChar;
-          i -= 1;
-        }
+      if (!this.pathExists(hatX, hatY)) {
+        this.field[holeY][holeX] = fieldChar;
+        i -= 1;
       }
     }
   }
 
-  pathExists(fieldSize, currentX, currentY) {
+  pathExists(currentX, currentY) {
     let fieldSquaresToCheck = [];
     let fieldSquaresAlreadyChecked = [];
 
-    let neighbours = getNeighbours(fieldSize, [currentX, currentY], fieldSquaresAlreadyChecked);
+    let neighbours = this.getNeighbours([currentX, currentY], fieldSquaresAlreadyChecked);
 
     neighbours.forEach(neighbour => fieldSquaresToCheck.push(neighbour));
 
     while (fieldSquaresToCheck) {
-      let newNeighbours = fieldSquaresToCheck.flatMap(fieldSquare => getNeighbours(fieldSize, fieldSquare, fieldSquaresAlreadyChecked));
+      let newNeighbours = fieldSquaresToCheck.flatMap(fieldSquare => this.getNeighbours(fieldSquare, fieldSquaresAlreadyChecked));
 
       fieldSquaresToCheck.forEach(fieldSquare => fieldSquaresAlreadyChecked.push(fieldSquare));
       fieldSquaresToCheck = newNeighbours;
@@ -84,7 +83,8 @@ class Game {
     return false;
   }
 
-  getNeighbours(fieldSize, [currentX, currentY], fieldSquaresAlreadyChecked) {
+  getNeighbours([currentX, currentY], fieldSquaresAlreadyChecked) {
+
     const neighbours = [
       [currentY - 1, currentX],
       [currentY, currentX + 1],
@@ -93,8 +93,8 @@ class Game {
     ]
 
     return neighbours.filter(fieldSquare =>
-      (fieldSquare[0] >= 0 && fieldSquare[0] < fieldSize) &&
-      (fieldSquare[1] >= 0 && fieldSquare[1] < fieldSize) &&
+      (fieldSquare[0] >= 0 && fieldSquare[0] < this.fieldSize) &&
+      (fieldSquare[1] >= 0 && fieldSquare[1] < this.fieldSize) &&
       (this.field[fieldSquare[0]][fieldSquare[1]] !== "O") &&
       (!fieldSquaresAlreadyChecked.some(array => array[0] === fieldSquare[0] && array[1] === fieldSquare[1])))
   }
@@ -150,11 +150,11 @@ class Game {
 
     console.log("Welcome to Find Your Hat!")
 
-    const fieldSize = prompt("How wide/high do you want the field to be? (Enter a number between 5-30): ");
+    this.fieldSize = prompt("How wide/high do you want the field to be? (Enter a number between 5-30): ");
 
-    const holePercentage = prompt(`Great, the field will be ${fieldSize}x${fieldSize}. How many percent do you want to be covered in holes? (Enter a number between 1-60): `);
+    const holePercentage = prompt(`How many percent do you want to be covered in holes? (Enter a number between 1-60): `);
 
-    this.generateField(fieldSize, holePercentage);
+    this.generateField(holePercentage);
 
     console.log(`Wonderful! Use your WASD buttons to move your character (${playerChar}) to the hat (${hatChar}).`);
     console.log("Let's Start!");
