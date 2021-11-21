@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable max-len */
 const prompt = require('prompt-sync')({ sigint: true });
 
 const hatChar = '^';
@@ -46,7 +44,9 @@ class Game {
       this.holePercentage = 1;
     }
 
-    const numOfHoles = Math.round((this.holePercentage / 100) * (this.fieldSize * this.fieldSize));
+    const numOfHoles = Math.round(
+      (this.holePercentage / 100) * (this.fieldSize * this.fieldSize)
+    );
     let placeHolesAttempts = 0;
     // let lastPlacedHole;
 
@@ -71,16 +71,29 @@ class Game {
     const fieldSquaresAlreadyChecked = [];
 
     while (fieldSquaresToCheck.length > 0) {
-      fieldSquaresToCheck.forEach((fieldSquare) => fieldSquaresAlreadyChecked.push(fieldSquare));
+      fieldSquaresToCheck.forEach((fieldSquare) =>
+        fieldSquaresAlreadyChecked.push(fieldSquare)
+      );
 
       // eslint-disable-next-line no-loop-func
-      let newNeighbours = fieldSquaresToCheck.flatMap((fieldSquare) => this.getNeighbours(fieldSquare, fieldSquaresToCheck, fieldSquaresAlreadyChecked));
+      let newNeighbours = fieldSquaresToCheck.flatMap((fieldSquare) =>
+        this.getNeighbours(
+          fieldSquare,
+          fieldSquaresToCheck,
+          fieldSquaresAlreadyChecked
+        )
+      );
 
-      newNeighbours = Array.from(new Set(newNeighbours.map(JSON.stringify)), JSON.parse);
+      newNeighbours = Array.from(
+        new Set(newNeighbours.map(JSON.stringify)),
+        JSON.parse
+      );
 
       fieldSquaresToCheck = newNeighbours;
 
-      if (fieldSquaresToCheck.some((array) => array[0] === 0 && array[1] === 0)) {
+      if (
+        fieldSquaresToCheck.some((array) => array[0] === 0 && array[1] === 0)
+      ) {
         return true;
       }
     }
@@ -92,12 +105,20 @@ class Game {
       [currentY - 1, currentX],
       [currentY, currentX + 1],
       [currentY + 1, currentX],
-      [currentY, currentX - 1]];
+      [currentY, currentX - 1],
+    ];
 
-    return neighbours.filter((fieldSquare) => (fieldSquare[0] >= 0 && fieldSquare[0] < this.fieldSize)
-      && (fieldSquare[1] >= 0 && fieldSquare[1] < this.fieldSize)
-      && (this.field[fieldSquare[0]][fieldSquare[1]] !== 'O')
-      && (!fieldSquaresAlreadyChecked.some((array) => array[0] === fieldSquare[0] && array[1] === fieldSquare[1])));
+    return neighbours.filter(
+      (fieldSquare) =>
+        fieldSquare[0] >= 0 &&
+        fieldSquare[0] < this.fieldSize &&
+        fieldSquare[1] >= 0 &&
+        fieldSquare[1] < this.fieldSize &&
+        this.field[fieldSquare[0]][fieldSquare[1]] !== 'O' &&
+        !fieldSquaresAlreadyChecked.some(
+          (array) => array[0] === fieldSquare[0] && array[1] === fieldSquare[1]
+        )
+    );
   }
 
   getCurrentBoardState() {
@@ -132,10 +153,10 @@ class Game {
 
   getGameStatus() {
     if (
-      this.playerYPosition >= this.field.length
-      || this.playerYPosition < 0
-      || this.playerXPosition >= this.field[this.playerYPosition].length
-      || this.playerXPosition < 0
+      this.playerYPosition >= this.field.length ||
+      this.playerYPosition < 0 ||
+      this.playerXPosition >= this.field[this.playerYPosition].length ||
+      this.playerXPosition < 0
     ) {
       return 'GAME LOST: You fell off the edge of the world.';
     }
@@ -154,13 +175,23 @@ class Game {
   startGame() {
     console.log('Welcome to Find Your Hat!');
 
-    this.fieldSize = Number(prompt('How wide/high do you want the field to be? (Enter a number between 5-30): '));
+    this.fieldSize = Number(
+      prompt(
+        'How wide/high do you want the field to be? (Enter a number between 5-30): '
+      )
+    );
 
-    this.holePercentage = Number(prompt('How many percent do you want to be covered in holes? (Enter a number between 1-60): '));
+    this.holePercentage = Number(
+      prompt(
+        'How many percent do you want to be covered in holes? (Enter a number between 1-60): '
+      )
+    );
 
     this.generateField();
 
-    console.log(`Wonderful! Use your WASD buttons to move your character (${playerChar}) to the hat (${hatChar}).`);
+    console.log(
+      `Wonderful! Use your WASD buttons to move your character (${playerChar}) to the hat (${hatChar}).`
+    );
     console.log("Let's Start!");
 
     console.log(this.getCurrentBoardState());
