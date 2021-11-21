@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable max-len */
 const prompt = require('prompt-sync')({ sigint: true });
 
 const hatChar = '^';
@@ -26,14 +28,14 @@ class Game {
     this.field[0][0] = playerChar;
 
     // Put hat on field
-    let hatX = 0;
-    let hatY = 0;
+    let hatX;
+    let hatY;
 
     // Prevents the hat from spawning on player
-    while (hatX === 0 && hatY === 0) {
+    do {
       hatX = Math.floor(Math.random() * this.fieldSize);
       hatY = Math.floor(Math.random() * this.fieldSize);
-    }
+    } while (hatX === 0 && hatY === 0);
 
     this.field[hatY][hatX] = hatChar;
 
@@ -46,21 +48,19 @@ class Game {
 
     const numOfHoles = Math.round((this.holePercentage / 100) * (this.fieldSize * this.fieldSize));
     let placeHolesAttempts = 0;
-    let lastPlacedHole;
+    // let lastPlacedHole;
 
     for (let i = 0; i < numOfHoles; i += 1) {
       const holeY = Math.floor(Math.random() * this.fieldSize);
       const holeX = Math.floor(Math.random() * this.fieldSize);
 
-      if (this.field[holeY][holeX] === fieldChar && this.pathExists(hatY, hatX)) {
+      if (placeHolesAttempts < 100 && this.field[holeY][holeX] === fieldChar) {
         this.field[holeY][holeX] = holeChar;
-        lastPlacedHole = [holeY, holeX];
-      } else {
-        placeHolesAttempts += 1;
-        if (placeHolesAttempts < 100) {
+
+        if (!this.pathExists(hatY, hatX)) {
+          this.field[holeY][holeX] = fieldChar;
+          placeHolesAttempts += 1;
           i -= 1;
-        } else {
-          this.field[lastPlacedHole[0]][lastPlacedHole[1]] = fieldChar;
         }
       }
     }
@@ -68,18 +68,19 @@ class Game {
 
   pathExists(currentY, currentX) {
     let fieldSquaresToCheck = [[currentY, currentX]];
-    let fieldSquaresAlreadyChecked = [];
+    const fieldSquaresAlreadyChecked = [];
 
     while (fieldSquaresToCheck.length > 0) {
+      fieldSquaresToCheck.forEach((fieldSquare) => fieldSquaresAlreadyChecked.push(fieldSquare));
 
-      let newNeighbours = fieldSquaresToCheck.flatMap(fieldSquare => this.getNeighbours(fieldSquare, fieldSquaresToCheck, fieldSquaresAlreadyChecked));
+      // eslint-disable-next-line no-loop-func
+      let newNeighbours = fieldSquaresToCheck.flatMap((fieldSquare) => this.getNeighbours(fieldSquare, fieldSquaresToCheck, fieldSquaresAlreadyChecked));
 
       newNeighbours = Array.from(new Set(newNeighbours.map(JSON.stringify)), JSON.parse);
 
-      fieldSquaresToCheck.forEach(fieldSquare => fieldSquaresAlreadyChecked.push(fieldSquare));
       fieldSquaresToCheck = newNeighbours;
 
-      if (fieldSquaresToCheck.some(array => array[0] === 0 && array[1] === 0)) {
+      if (fieldSquaresToCheck.some((array) => array[0] === 0 && array[1] === 0)) {
         return true;
       }
     }
@@ -87,40 +88,36 @@ class Game {
   }
 
   getNeighbours([currentY, currentX], fieldSquaresToCheck, fieldSquaresAlreadyChecked) {
-
     const neighbours = [
       [currentY - 1, currentX],
       [currentY, currentX + 1],
       [currentY + 1, currentX],
-      [currentY, currentX - 1]
-    ]
+      [currentY, currentX - 1]];
 
     // Checks that the square is inside field, that it's not a holeChar, that it is not already in either fieldSquaresAlreadyChecked or in fieldSquaresToCheck
-    return neighbours.filter(fieldSquare =>
-      (fieldSquare[0] >= 0 && fieldSquare[0] < this.fieldSize) &&
-      (fieldSquare[1] >= 0 && fieldSquare[1] < this.fieldSize) &&
-      (this.field[fieldSquare[0]][fieldSquare[1]] !== 'O') &&
-      (!fieldSquaresAlreadyChecked.some(array => array[0] === fieldSquare[0] && array[1] === fieldSquare[1])) &&
-      (!fieldSquaresToCheck.some(array => array[0] === fieldSquare[0] && array[1] === fieldSquare[1])));
+    return neighbours.filter((fieldSquare) => (fieldSquare[0] >= 0 && fieldSquare[0] < this.fieldSize)
+      && (fieldSquare[1] >= 0 && fieldSquare[1] < this.fieldSize)
+      && (this.field[fieldSquare[0]][fieldSquare[1]] !== 'O')
+      && (!fieldSquaresAlreadyChecked.some((array) => array[0] === fieldSquare[0] && array[1] === fieldSquare[1])));
   }
 
   getCurrentBoardState() {
-    return this.field.map(row => row.join('')).join('\n');
+    return this.field.map((row) => row.join('')).join('\n');
   }
 
+  // eslint-disable no-param-reassign
   changePlayerPosition(event) {
     console.clear();
-    event = event.toLowerCase();
 
-    if (event === 'a') {
+    if (event.toLowerCase() === 'a') {
       this.playerXPosition -= 1;
-    } else if (event === 'd') {
+    } else if (event.toLowerCase() === 'd') {
       this.playerXPosition += 1;
     }
 
-    if (event === 'w') {
+    if (event.toLowerCase() === 'w') {
       this.playerYPosition -= 1;
-    } else if (event === 's') {
+    } else if (event.toLowerCase() === 's') {
       this.playerYPosition += 1;
     }
 
@@ -128,7 +125,7 @@ class Game {
       if (event === 'a' || event === 'd' || event === 'w' || event === 's') {
         this.field[this.playerYPosition][this.playerXPosition] = playerChar;
       } else {
-        console.log('Please use the WASD buttons to control your character.')
+        console.log('Please use the WASD buttons to control your character.');
       }
       console.log(this.getCurrentBoardState());
     }
@@ -136,24 +133,27 @@ class Game {
 
   getGameStatus() {
     if (
-      this.playerYPosition >= this.field.length ||
-      this.playerYPosition < 0 ||
-      this.playerXPosition >= this.field[this.playerYPosition].length ||
-      this.playerXPosition < 0
+      this.playerYPosition >= this.field.length
+      || this.playerYPosition < 0
+      || this.playerXPosition >= this.field[this.playerYPosition].length
+      || this.playerXPosition < 0
     ) {
       return 'GAME LOST: You fell off the edge of the world.';
-    } else if (this.field[this.playerYPosition][this.playerXPosition] === holeChar) {
+    }
+
+    if (this.field[this.playerYPosition][this.playerXPosition] === holeChar) {
       return 'GAME LOST: You walked into a hole.';
-    } else if (this.field[this.playerYPosition][this.playerXPosition] === hatChar) {
-      return 'GAME WON: Congratulations! You found your hat!'
+    }
+
+    if (this.field[this.playerYPosition][this.playerXPosition] === hatChar) {
+      return 'GAME WON: Congratulations! You found your hat!';
     }
 
     return null;
   }
 
   startGame() {
-
-    console.log('Welcome to Find Your Hat!')
+    console.log('Welcome to Find Your Hat!');
 
     this.fieldSize = Number(prompt('How wide/high do you want the field to be? (Enter a number between 5-30): '));
 
@@ -165,7 +165,7 @@ class Game {
     console.log("Let's Start!");
 
     console.log(this.getCurrentBoardState());
-
+    /* eslint no-constant-condition: ["error", { "checkLoops": false }] */
     while (true) {
       const gameOverReason = this.getGameStatus();
 
@@ -174,13 +174,11 @@ class Game {
         break;
       }
 
-      let currentMove = prompt('');
+      const currentMove = prompt('');
       this.changePlayerPosition(currentMove);
-
     }
   }
 }
-
 
 const myGame = new Game();
 
