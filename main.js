@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable max-len */
 const prompt = require('prompt-sync')({ sigint: true });
 
 const hatChar = '^';
@@ -48,13 +50,13 @@ class Game {
       (this.holePercentage / 100) * (this.fieldSize * this.fieldSize)
     );
     let placeHolesAttempts = 0;
-    // let lastPlacedHole;
 
     for (let i = 0; i < numOfHoles; i += 1) {
       const holeY = Math.floor(Math.random() * this.fieldSize);
       const holeX = Math.floor(Math.random() * this.fieldSize);
 
-      if (placeHolesAttempts < 100 && this.field[holeY][holeX] === fieldChar) {
+      // placeHolesAttempts usually ends up between 1-8
+      if (placeHolesAttempts < 30 && this.field[holeY][holeX] === fieldChar) {
         this.field[holeY][holeX] = holeChar;
 
         if (!this.pathExists(hatY, hatX)) {
@@ -77,11 +79,7 @@ class Game {
 
       // eslint-disable-next-line no-loop-func
       let newNeighbours = fieldSquaresToCheck.flatMap((fieldSquare) =>
-        this.getNeighbours(
-          fieldSquare,
-          fieldSquaresToCheck,
-          fieldSquaresAlreadyChecked
-        )
+        this.getNeighbours(fieldSquare, fieldSquaresAlreadyChecked)
       );
 
       newNeighbours = Array.from(
@@ -125,7 +123,6 @@ class Game {
     return this.field.map((row) => row.join('')).join('\n');
   }
 
-  // eslint-disable no-param-reassign
   changePlayerPosition(event) {
     console.clear();
 
