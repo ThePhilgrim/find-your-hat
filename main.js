@@ -87,14 +87,13 @@ class Game {
     return false;
   }
 
-  getNeighbours([currentY, currentX], fieldSquaresToCheck, fieldSquaresAlreadyChecked) {
+  getNeighbours([currentY, currentX], fieldSquaresAlreadyChecked) {
     const neighbours = [
       [currentY - 1, currentX],
       [currentY, currentX + 1],
       [currentY + 1, currentX],
       [currentY, currentX - 1]];
 
-    // Checks that the square is inside field, that it's not a holeChar, that it is not already in either fieldSquaresAlreadyChecked or in fieldSquaresToCheck
     return neighbours.filter((fieldSquare) => (fieldSquare[0] >= 0 && fieldSquare[0] < this.fieldSize)
       && (fieldSquare[1] >= 0 && fieldSquare[1] < this.fieldSize)
       && (this.field[fieldSquare[0]][fieldSquare[1]] !== 'O')
